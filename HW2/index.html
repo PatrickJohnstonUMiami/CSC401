@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Randomize-In-Place</title>
+
+<style type="text/css"><!--
+body {
+   font-family: "Trebuchet MS", Skia, "Lucida Sans Unicode", sans-serif;
+   font-size: 2.0px;
+   margin: 2.5em auto 5em 5% ;
+   width: 90%;
+}
+
+#header {
+   margin: 1em 0 ;
+   border: 1px #369;
+   border-style: solid solid ;
+   padding: 0em  2em 0 ;
+   text-align: center ;
+}
+
+#header .title {
+   font-size: 0.9em ;
+   margin-bottom: 0 ;
+}
+
+#footer {
+   margin: 3em 0 ;
+   /*border: 2px #036;*/
+   border: 10px #369;
+   border-style: solid solid ;
+   padding: .7em ;
+
+}
+
+#footer img {
+   border: none ;
+}
+
+.section {
+   font-size: 1.2em ;
+   font-weight: bold ;
+}
+
+a {
+   color: #339 ;
+   text-decoration: none ;
+}
+
+.mybox {
+   border: 3px #369;
+   border-style: solid solid ;
+   padding: 1.5em ;
+   margin: 0em 0 ;
+}
+
+.prebox {
+   padding: 0em ;
+   background: #ffc;
+   overflow: scroll;
+}
+
+.arraytext {
+   float: left;
+   text-align: center;
+   width: 100%;
+   margin-top: 1em ;
+   font-size: 1.0em ;
+}
+
+.arraycell {
+	float: left;
+	width: 3em ;
+	height: 3em ;
+	background: #999 ;
+}
+
+--></style>
+
+<script type="text/javascript">
+
+var bluearray =[ "#00f", "#11f", "#22f", "#33f", "#44f", "#55f", "#66f", "#77f",
+				"#88f", "#99f", "#aaf", "#bbf", "#ccf", "#ddf", "#eef", "#fff" ] ;
+
+var cb_color  = "#ffc" ; //code background
+var cbh_color = "#faa" ; //code background highlight
+var minish_color = "yellow" ; //color of min value
+
+
+var xg ;
+var jg ;
+var algG ;
+
+
+function permuter(n) {
+   var x ;
+   A = new Array(n) ;
+   for ( x=0; x<n; x++ ) A[x] = x ;
+   for ( x=n-1; 0<=x; x-- ) {
+      var z ;
+      z = Math.floor(x*Math.random()) ;
+      var k = A[z] ;
+      A[z] = A[x] ;
+      A[x] = k ;
+   }
+   return A ;
+}
+
+function stepZero() { initElement() ; }
+
+function setElementValue(elementId, value) {
+	if ( document.getElementById(elementId).innerText!=undefined ) {
+		document.getElementById(elementId).innerText = value ;
+	} else {
+		document.getElementById(elementId).textContent = value ;
+	}
+}
+
+function initElement() {
+  a = permuter(16);
+	var i ;
+	for ( i=1; i<17;i++ ) {
+		document.getElementById('n'+i).style.background = bluearray[16-i] ;
+		document.getElementById('n'+i).style.color = "black" ;
+		setElementValue('array'+i, a[i-1]) ;
+	}
+	xg = -1 ;
+	jg = -1 ;
+	algG = 0 ;
+
+	document.getElementById("coltc0").style.background = cb_color ;
+	document.getElementById("coltc1").style.background = cb_color ;
+	document.getElementById("coltc2").style.background = cb_color ;
+	document.getElementById("coltc3").style.background = cb_color ;
+
+	setCodeColors(0) ;
+}
+
+function cellCol(cell, color) {
+	document.getElementById('n'+cell).style.background = color ;
+}
+
+function redrawArray() {
+	var x ;
+	for ( x=0; x<=xg; x++ ) {
+		cellCol(x+1,"#f11") ;
+	}
+	for ( x=1; x<17; x++ ) {
+	    setElementValue('array'+x, a[x-1]) ;
+	}
+}
+function swap(array, jg,xg){
+    var temp = array[jg];
+    array[jg] = array[xg];
+    array[xg] = temp;
+};
+function algStep() {
+  switch (algG) {
+    case 0:
+      xg++;
+      if (xg == 15) {
+        algG = 2;
+        setCodeColors(1);
+        break;
+      }
+          //slways redraww
+      redrawArray();
+      setCodeColors(1);
+      algG = 1;
+      break;
+    case 1:
+      jg = xg + Math.floor(Math.random() * (16 - xg));
+          swap(a,jg,xg);
+          
+      redrawArray() ;
+      setCodeColors(2) ;
+      algG = 0 ;
+      break ;
+    case 2:
+      redrawArray();
+      setCodeColors(3);
+      break;
+  }
+}
+
+function setCodeColors(i) {
+  document.getElementById("coltc0").style.background = cb_color ;
+	document.getElementById("coltc1").style.background = cb_color ;
+	document.getElementById("coltc2").style.background = cb_color ;
+	document.getElementById("coltc3").style.background = cb_color ;
+  document.getElementById("coltc"+i).style.background = cbh_color ;
+}
+</script>
+
+</head>
+<body onload="initElement();">
+
+<div id="header">
+<h1>
+Randomize-In-Place
+</h1>
+</div>
+
+<p>
+HW2 CSC401
+
+<div class="mybox">
+
+<div id="array">
+<div class="arraycell" id="n1">
+<div id="array1" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n2">
+<div id="array2" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n3">
+<div id="array3" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n4">
+<div id="array4" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n5">
+<div id="array5" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n6">
+<div id="array6" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n7">
+<div id="array7" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n8">
+<div id="array8" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n9">
+<div id="array9" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n10">
+<div id="array10" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n11">
+<div id="array11" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n12">
+<div id="array12" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n13">
+<div id="array13" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n14">
+<div id="array14" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n15">
+<div id="array15" class="arraytext"></div>
+</div>
+<div class="arraycell" id="n16">
+<div id="array16" class="arraytext"></div>
+</div>
+</div>
+
+<!-- left margin -->
+<div style="clear: left;"></div>
+
+<p>
+<div class="prebox" style="width:30em;">
+Randomize-In-Place HW
+<br>
+<br>
+Start:
+<br>
+<span id="coltc0">
+&nbsp;&nbsp;Set index x to -1
+<br>
+&nbsp;&nbsp;Set variable n to be the length of the array A
+<br>
+&nbsp;&nbsp;Make randomization be checked to (x,n)
+</span>
+<br>
+while x&lt;n
+<br>
+<span id="coltc1">
+&nbsp;&nbsp;x++
+</span>
+<br>
+<span id="coltc2">
+&nbsp;&nbsp;make a swap with the array A[x] with A[rando(x,n)]
+</span>
+<br>
+<span id="coltc3">
+return A
+</span>
+</div>
+
+<table>
+<tr>
+<td style="border: solid red 2px; background: #eef;"
+onclick="stepZero()">&nbsp;Restart&nbsp;
+<td style="border: solid red 2px; background: #fee;"
+onclick="algStep()">&nbsp;Next&nbsp;
+</table>
+
+</div>
+</div>
+
+</body>
+</html>
